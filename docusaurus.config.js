@@ -52,7 +52,28 @@ const config = {
       }),
     ],
   ],
-
+  plugins: [
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "workshops",
+        path: "workshops",
+        routeBasePath: "workshops",
+        // sidebarPath: require.resolve("./sidebarsCommunity.js"),
+        // ... other options
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "labs",
+        path: "labs",
+        routeBasePath: "labs",
+        // sidebarPath: require.resolve("./sidebarsCommunity.js"),
+        // ... other options
+      },
+    ],
+  ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -70,6 +91,21 @@ const config = {
             label: "Learn",
           },
           { to: "/blog", label: "Blog", position: "left" },
+          {
+            to: "/workshops",
+            label: "Workshops",
+            position: "left",
+          },
+          {
+            to: "/labs",
+            label: "Labs",
+            position: "left",
+          },
+          {
+            to: "/staff",
+            label: "Staff",
+            position: "right",
+          },
           {
             href: "https://github.com/facebook/docusaurus",
             label: "GitHub",
