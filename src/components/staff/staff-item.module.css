@@ -1,0 +1,114 @@
+.staffItem {
+  display: flex;
+  gap: 3rem;
+  padding: 5rem;
+  max-width: 60rem;
+  min-height: 25rem;
+  position: relative;
+  width: 100%;
+  margin: 2rem;
+}
+
+/* Image */
+
+.staffImage {
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.staffImage > img {
+  object-fit: cover;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.hoverImg {
+  display: none;
+  filter: brightness(85%);
+}
+
+.staffImage:hover .mainImg {
+  display: none;
+}
+
+.staffImage:hover .hoverImg {
+  display: block;
+}
+
+/* Staff Info */
+.staffInfo {
+  background-color: #ebe9e5;
+  padding: 1rem;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.staffInfo > h2 {
+  color: #b7832c;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+/* Social Links */
+.staffSocial {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.staffSocial a {
+  display: flex;
+  align-self: stretch;
+}
+
+/* Monologue */
+
+.monologue {
+  margin-bottom: 1rem;
+}
+
+.monologue > h3 {
+  color: #b7832c;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+/* Skillz */
+
+.skillz > h3 {
+  color: #b7832c;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.skillz > div {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Staff Accent pictures */
+
+.staffAccent1 {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 10rem;
+  color: #c3c262;
+  opacity: 0.5;
+}
+
+.staffAccent2 {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 8rem;
+  color: #283b52;
+  opacity: 0.5;
+}
