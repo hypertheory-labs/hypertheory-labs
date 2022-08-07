@@ -1,0 +1,269 @@
+---
+title: Distributed Systems Architecture
+author: Jeff Gonzalez
+---
+
+In this explainer, I will be talking about the architecture of a distributed system. It will be a bit
+of a "victors writing the history" take on this, when in reality it was much more complicated.
+
+## Overview (TLDR)
+
+In building distributed systems we have no idea what we are doing. We can't know. We learn by doing, and as we learn the world changes. The world where software runs now is very different than the world of even the 1990s.
+
+There has been a sort of fitful evolution of what we think is the best way to build software over the years. Any presentation, **like this one** will make it look like we had some way of doing this, then we replaced it with another, and then another, and there is a clear separation between each. That just isn't usually the cases.
+
+Especially in large enterprises, you will see, if you dig deeply enough _each of these approaches_ running today. A good rule of thumb when seeing that kind of "legacy" stuff is to think "wow, that must be awesome if it is still providing value now!".
+
+However, without having _some_ understanding of the problems each of these architectural patterns were intending to solve, we might mistakenly think that since one style is still in use, it's a good idea to continue to use that style. It is in that spirit this is presented.
+
+## Host Based Systems (Pre Distributed Systems)
+
+In the early days of software development, depending on what world you were working in, you were either building desktop applications that would be installed on a person's PC, along with the databse. Tools like dBase by Ashton Tate, or, later, Access by Microsoft, were common tools for this. There was no suggestion of shared data (concurrency). You owned the application and the data.
+
+![Desktop Application](/img/services/host1.png)
+
+If you needed concurrency - shared data - you would have to use a distributed system of some type. A common model was to have some sort of host computer - maybe a mainframe, or a mini computer, and this server would provide the application logic, and "dumb" terminals would connect in and give access to this shared date.
+
+![Mainframe Application](/img/services/host2.png)
+
+## Two-Tier Architecture
+
+As the presence of powerful (at the time) PCs on everyone's desktop began to proliferate, we created a kind of synthesis of the above two models. The application logic would run on a person's desktop, and a shared database would be on the server, providing concurrency.
+
+![Two Tier Application](/img/services/twotier.png)
+
+:::warning A Problem with this is _Invariants_
+With the application logic distributed across machines, there was no "central authority" for data validity and business rule processing. We no longer had the expense of a mainframe, but we still needed at least _some_ centralized "logic". This is the beginning of the reign of the **Stored Procedure**. Database vendors made their database engines programmable. First with extensions to the SQL programming language, turning SQL's natural declarative foundations into imperative constructs like `if`, `else`, and `while`, etc. Then with extensions that allowed the programmer to write their own functions using languages like (first) Java, and later .NET. Before you knew it you had recreated the mainframe, but now running on cheap, limited hardware. So, the database vendors came to the rescue again (for the problem they had created) by selling complex and cumbersome (and often buggy) replication tools. Now you could run your half-baked solution across a network of computers.
+:::
+
+### Vendor Lock-In
+
+In the two-tier model, the network communication was based on the database vendor. We used the native APIs provided by the database to issue commands across a network from the client to the server, and would retreive the results in a format that the server determined, but the client could understand.
+
+There was a fair amount of vendor _lock-in_. We got nervous when we thought that the vendor had a monopoly on the technology that our _enterprise_ depended upon.
+
+What if we needed or just wanted to switch to another database vendor? We would have to rewrite _everything_.
+
+Believe it or not, it was Microsoft that came to the rescue on this one (not exactly known, at the time, as the company to dissuade you from being locked in to a technology). They were such a big deal at the time that they pretty much could just release a new thing and christen it a "standard". This is what they did with a technology called "Open Database Connectivity" (ODBC).
+
+ODBC is the acknowledgement that although different database vendors provide different ways to do things, almost all of your code is doing the same thing no matter what database you are using. You are sending commands and getting responses back. ODBC provided a standard interface for talking to _any_ database that provided a "driver" to translate their specific implementation into the common interface. Sure, it was programming at the "lowest common denominator", and I'm sure there were a few applications that actually _did_ decide to switch out their databases at some point, but that was a long time ago.
+
+The two main forces that obviated the need to move to _something else_ here, though were:
+
+1. Replication sucks. It was complicated and unreliable, and made the developer think too much about whether the instance of the database they were connnected to would allow them to modify data or not, or whether the data was up to date, etc. And replication was mostly needed because now our database engines were doing things that were not possible with a traditional database - they provided the logic for our applications.
+2. This logic was written in sub-par programming languages or in constrained ways that did not facilitate good testing, good reuse, and debuggin. Stored procedures, whether they are written in a SQL dialect or a subset of Java or .NET were a pale compromise from a full programming stack. And our business rules were getting more complex.
+
+## Enter _N_-Tier Architecture
+
+Software developers have almost always been able to have "remote procedures". That is the ability to have a function (or method) you call in your code _actually_ be handled and executed on another machine. These **remote procedure calls** are powerful, but were usually used at a lower level of programming than most application developers were used to. Even the name "procedure" implies a world before the then hip paradigm programmers were into - "Object Oriented Programming".
+
+### Location Transparency and Application Servers
+
+Software tool vendors took it upon themselves to fix this problem. They created the idea of _application servers_, machines running a managed environment for your shared logic to run, and mechanisms to make it trivial to call that code from anywhere.
+
+Sun Microsystems introduced technology like "Java Beans" to accomplish this, and Microsoft extended their COM programming model to include a "remote procedure call" mechanism called Distributed COM (DCOM).
+
+Microsoft, in particular, really leaned into their misguided understanding of what we now call "Developer Experience" on this.
+
+:::note Microsoft and "Developer Productivity"
+Microsoft was big on the idea of "Developer Productivity", which sounds really good. What it amounted to in many cases was them making the easy cases super easy and the hard cases super hard. Most Microsoft product demos at the time would show those easy cases. They were often followed by the infamous line "Look! We did that _without writing a line of code_". My theory is that when business people saw that, they were "really" happy. Maybe at last we can take those programmers down a notch or two! Why do my people make this so HARD? In reality, though, it is hard. Software development is hard. It is almost impossible to generalize every use case without making all the software slowly turn into some weak impersonation of a Sharepoint site. But I digress.
+:::
+
+Microsoft's guidance, for example, was that application developers should "break up" their software into libraries (DLLs) with an executable (EXE) that provided the user interface. The libraries most commonly be segmented into:
+
+- one library for your "business rules"
+- one library for your "data access layer"
+
+The "Presentation" layer would provide the user interface, the "Business" layer would provide the business logic, and the "Data" layer would provide the data access.
+
+The rule was your presentation layer could only talk to your business layer. Your business layer could only talk to your data layer. Your data layer could only talk to your database. Clean. Neat. Authoritarian.
+
+![N-Tier Architecture Phase 1](/img/services/ntierlocal.png)
+
+This separation of layers was pretty easy to accomplish in a well-factored code base, in most cases. Once you had established this, these new technologies (DCOM, and the server-side tool called Microsoft Transaction Server (MTS)) allowed you to have a "remote procedure call" mechanism that allowed you to call your business logic from anywhere. You could share your "business objects" across presentation tier applications, you could scale them (instead of your database) to meet demand. You'd have _one place_ to update your business logic, and you'd have _one place_ to update your data access layer.
+
+Dreamy.
+
+![N-Tier Architecture Phase 2](/img/services/ntierdistributed.png)
+
+Now **that** is starting to look a bit like an "enterprise" application! It begins to set the stage for the "dream" of Enterprise Architecture.
+
+:::warning The Enterprise Architecture Dream
+The dream of Enterprise Architecture is something like "wouldn't it be _great_ if building software was as easy as putting a Lego set together?". You have all these services that do our "business" stuff, and building new applications means you just sort of "snap together" different pieces of software provided as independently deployable and scalable pieces of "infrastructure". Want to migrate that desktop application to one of these new-fangled Web applications? Just replace the presentation layer!
+:::
+
+### We Outgrew That, Too.
+
+It worked for a while. But there were some forces that made themselves apparent as we invested more and more into this way of designing systems.
+
+#### Shared Business Rules Are the Exception, Not the Rule
+
+For example, the dream of "shared business rules" looks good on paper, but it turns out different presentations of an application often have very different business requirements. We'd already learned that in Object Oriented Programming, the promise of "code reuse" was a little over sold. Now we were beginning to see it spread across an organization. A big failure was the idea that in a big business, each organization or platform would have share the same idea of the business that every other platform or organization has. The idea of something as simple as a "Customer" on one platform might be way more complicated (or way less complicated) than the idea of a Customer on another platform.
+
+That means if you are going to stay "strict" on this, each platform would have to adopt the notion of a "Customer" that is as complex as the most complicated use of that term.
+
+:::warning Wow! I only needed the customer's email address, but I had to make three service calls and got back an object with 250 properties, most of which I don't know what they even mean!
+:::
+
+#### The Database Has Become the Bottlneck. Again.
+
+We bought some time. We gave the database a lobotomy. We took as much of the logic as we could out of the database, patted it on it's little head and said "Ok, you can just do database stuff now. You can relax." But those suckers _grew_. More data. More tables. More complex queries.
+
+And when you make all the upstream code ignorant of the butt-end of the downstream (the database), that means you introduce a _ton_ of fragility. A relatively modest change to the database schema would require a lot of code changes to the application. And those would only be apparent when stuff started blowing up.
+
+You _could_ solve the problem a bit by just adding new databases. The customer platform, for example, could have their _own_ database, and if you want to access that, you go throught he "DAL" (Data Access Layer) of the Customer platform. But that will introduce _another_ problem.
+
+When all of your data lives in one database, you get a strong sense of "now". If a DAL component wants to do something like "place an order for a customer", it can create a _transaction list_. The transaction list is a list of all the things that need to happen in order to complete the request. And either all of it happens, or none of it happens.
+
+```yaml
+TransactionList:
+  - Check Inventory
+  - Check Customer Status
+  - Remove Items From Inventory
+  - Add Items To Order
+  - Print Picking List for Warehouse
+  - Charge the Customer
+```
+
+Database engines, especially Relational Database Engines, let you "wrap up" all data modifications in a _serializable_ set of operations.
+
+:::note Serializable
+This just means that at some point our "leger" for our business has to be able to say "this thing happened at this time", and this other thing happened either before it or after it. In a distributed system, you have a lot of things happening at the same time, but at some point (I call this "Now"), you have to make sure that all of those things are serializable.
+:::
+
+The point being, what if the things in your transaction list exist on different databases? You can't just "merge" them together. You have to make sure that they are all serializable. And you sort of can't do it because they, too are "distributed" (living in a different "now"). So now it might look like this:
+
+```yaml
+TransactionList:
+  - Check Inventory - The Inventory database
+  - Check Customer Status - The Customer database
+  - Remove Items From Inventory - The Inventory database
+  - Add Items To Order - The Orders Database
+  - Print Picking List for Warehouse - The Warehouse Database
+  - Charge the Customer - The Finance Database
+```
+
+What if one of the later steps fails? What if you get all the way to `Charge the Customer` and the credit card is bad? Now you have to go back to each of those other databases and tell them **My bad. Fix that**. These are called "compensating activities".
+
+It was a lot of work, and lot could go wrong. And often did.
+
+At some point, Microsoft created a technology called the "Distributed Transaction Coordinator" to address this problem. An absolutely brilliant engineer named Pat Helland was central to this effort. With this, you could do a "two-phase commit". You could tell each of those databases to "prepare" for the transaction. And then you could tell each of those databases to "commit" the transaction when they all agreed they could do the work. If one of them couldn't, all the other work would be rolled back. It didn't work. It didn't scale. There were lots of issues, but one in particular was simply "how long should I wait for the commit"? Because _while the data is involved in a transaction it is locked_. The longer the transaction, the longer the data was locked. Nobody else could access that data.
+
+What _some_ wealthy companies did to get around this was throw lots of money at database vendors to have BIG FREAKING DATABASES (DB2 comes to mind). You could get the scalability, but you still had the original problem, which is schema fragility. Entire layers of beurocracy were created to address this problem. Legions of DBAs, "Data Architects", and "process" that makes making even the simplest changes to a database schema take forever.
+
+#### OMG The Network is Saturated!
+
+Another problem is the network. The best intentions behind the idea of "location transparency" meant that doing something that should be just one or two network calls might take dozens. It also meant that you applicaion servers often had to be "stateful". They would have to hold on to objects that a client would be using between operations.
+
+Some idiomatic Visual Basic presentation tier code at the time might look like this:
+
+```vb
+Dim c as new Customer()
+c.Name = "John Doe"
+c.PhoneNumber = "555-1212"
+c.Email = "john@aol.com"
+c.Save()
+```
+
+However, if your customer object were actually living across a network, each of those operations would have to be a round-trip across the network.
+
+And what if the penultimate `c.Save()` never got called? How long should that application server hold onto the customer object?
+
+#### Vendor Lock-In Rears Its Ugly Head Again
+
+Remember that old ODBC thing? We sort of lost all that except at the very edge of the network. Here we had to sort of choose our distributed application technology. You could use Java with CORBA and RMI, maybe. You could use Microsoft with DCOM. But they wouldn't play well with each other. People got a little fed up with this.
+
+## Enter SOAP Based Messaging
+
+This was the late 1990's, early 2000s. XML was all the rage. It was going to solve _everything_. At its core was the idea of a univeral way to represent data. It didn't matter where the data was coming from or going to, it could be expressed in the XML Infoset. There could be structure to the data, and even limited type information (Schema, DTD, etc.).
+
+SOAP (Originally "Simple Object Access Protocol", but not just for objects, and never simple) is an application of XML for messaging between applications.
+
+This technology was a corrective for two of the problems listed above:
+
+- No Move Vendor Lock-In: Your applications could talk to any other application that could understand SOAP. A Presentation tier application in .NET for example, could send data to be processed to a Java Application. This was huge.
+- No More Location Transparaency: Network saturation was decreased because a SOAP client would prepare a message (as opposed to a series of method calls), and submit them to a server to be processed. So, our psuedo-VB code above might look more like:
+
+```vb
+Dim c as new CustomerMessage()
+c.Name = "John Doe"
+c.PhoneNumber = "555-1212"
+c.Email = "john@aol.com"
+Dim client as new CustomerService();
+client.Save(c)
+```
+
+It would only be on the final call (`client.Save(c)`) that the message would be sent to the server.
+
+## Enter Service-Oriented Architecture (SOA)
+
+Service-Oriented Architecture (SOA) is a way to express the idea of a service. A service is a set of operations that can be performed on a set of data. You can see from that VB example above that we are not really talking about _objects_ anymore, but services that can work on a set of data, tranform it, enforce business rules upon operations, and return the result.
+
+With the introduction of the platform-neutral SOAP messaging, industry leaders like Microsoft and Sun ushered in the idea of a "service-oriented architecture" - that there could be actual architectural practices (even "best" practices) for how to write distributed applications.
+
+We _did_ get smarter. We got better at this stuff. We built some rad software that made tons of money.
+
+However, some of the problems we mentioned above were sort of glossed over again. We didn't address distributed transactions, really. We didn't really address the "big ball of mud" that is the result of chasing the "Lego Brick System" dream.
+
+A lot of clever technologies were created (ahem, _sold_) to try to address these problems. Let's face it, there is a lot of _coupling_ in these kind of systems. A change in any one place could cause failures in other places.
+
+Tools like an **Enterprise Service Bus** were a little helpful. They would break the coupling between one service and another by introducing a service that "knows" how the traffic should be routed "now".
+
+Largely big enterprises doubled down on the Lego brick idea. They would create things like "Universal API Gateways" - a "documented" repository of all the APIs you could aggregate together to create new cool stuff.
+
+:::warning Service Oriented Architecture is Aligned with RPCs
+The _default_ integration between services in an SOA is the remote procedure call. Service A asks Service B for something by calling it and waiting for a response. This isn't _necessiated_ by SOA, but it is the most obvious choice for most developers and architects. Its easy to reason about, and if you have the privelege of having your code live in a dev or test environment with minimal real world chaos (network partition failure, etc.) it makes a lot of sense. During this period we were also, as an industry, very fractured between the make believe world of "Development", and the real world (read: where the code runs) of the Infrastructure or (Operations) team. If it broke in production, it was their fault. And it would always break in production. The more you distribute an application, the more it will fail. **QED**.
+:::
+
+## Enter Vertical Slice Architecture
+
+Back on my Lego Brick BS for a bit. The problem with that metaphor in software architecture is that when I buy a Lego set to build the Millenium Falcon, for example, it comes with every brick I need. If I were to try to build the same thing by using a bunch of random bricks in a bucket, it would just not turn out right.
+
+SOA tries to give a general bucket of Lego bricks that the developers need to use (apply) to a specific usage.
+
+It also had the side-effect of disconnecting the developer from the real work they were doing to provide business value. "We need to get a list of outstanding bills for a customer" meant that you had to have a not a list of outstanding bills in your database, but knowing what service you should call, and that might mean you have to call a couple of services, and in the end you might get some of the data you needed, but other parts would be missing, so you'd have to set up a meeting with the service owners and entreat them to help you get the data you need, and they'd have to set up a process with the data architects, and blah blah blah.
+
+Meanwhile the data you need is just sitting in the database. You can see it!
+
+It turned out that teams that just, you know, built applications, were able to be more responsive to the business than those that were trying to stay SOA purists. Let's not try to create the universal Lego set. Build what you need, use good strong coding skills, but your job is to ship software.
+
+Vertcal Slice Architecture favors **Cohesion**. Put the code that changes together, together. The abstractions between these now seemingly arbitrary layers of "business logic" and "data access layers" don't provide value. Why should I have to go through three layers of services that I don't own just to get a drop-down list on my web page filled?
+
+Vertical Slice Architecture means that the team that owns the pixels on the screen presented to the customer own the code between that and the database.
+
+Is this perfect? No. Does it work. Pretty well, if your definition of work is "getting software delivered". And shouldn't that be our definition of "work"? I mean, I don't want to be a complete anarchist here, but wow did all that SOA make EVERYTHING hard, even the things that shouldn't be.
+
+## Enter "Domain Driven Design"
+
+Ok, Domain Driven Design is amazing. Ground breaking. It has important contributions to the world of software development and software architecture that I use daily.
+
+But wow did we screw it up.
+
+The problem is people didn't actually read the book. Or, if they did, they just jumped to the code examples and didn't read the important bits at the beginning.
+
+Domain Driven Design is predicated on the fact that _some_ software is _really_ complex. It isn't just all vertical slice Ruby on Rails apps doing some database queries. There is real complexity in _some_ software. The example that drives the book is international shipping. That is a lot more complicated than about 98% of the software you use today. The books is a mixture of technical and business terms. The stuff about the "ubiquitious language", and "domains", "bounded contexts", and patterns like "anti-corruption layers" are extremely helpful for keeping us aligned with the business requirements. The book also has a ton of code examples and patterns that are really helpful in some cases, or at some point in time, but really it presents two different things. "Big picture" language and concepts to simplify software architecture, and patterns and code practices for dealing with really complex systems.
+
+My only problem with this is that a certain type of software developer that loves complexity (for the sake of argument, let's call them "Architects"), started to think that the patterns in Domain Driven Design are the default we should use for _any_ software we build. It was never presented this way, and frankly, there were plenty of warnings to _not_ apply it this way.
+
+## Enter Microservices
+
+Deploying software has been a challenge for many years. While we want to be good "agile" or "lean" developers, moving fast, shipping code, etc. the technical requirements that are aligned with our responsibility to not only move fast but also _limit damage_ by moving fast have been nearly insurmountable.
+
+That is until there arrived some businesses whose sole bottom line as driven by addressing these technical challenges. Getting software running fast and with as little friction as possible.
+
+Companies like Heroku made it so you could deploy software with something as easy as this:
+
+```bash
+heroku create -a my-service
+git push heroku main
+```
+
+Literally one minute you could be running version 1.0 of your software, and the next version 2.0. And then you could be running version 3.0 an hour later.
+
+Technologies like containers (Docker), and orchestration tools like Kubernetes means that we are moving from a world with infrequent, large, risky deployments, to a world where we can do lots of tiny deployments, and we can do them quickly. And we can "undo" them if there is a problem.
+
+Small deployments are good, sure, but maybe lean into the "Unix Philosophy" where you make things even less risky by having lots of small, focused services, instead of big "monolithic" things. Sure, you increase the coupling (more network and stuff), but you can move faster.
+
+And what if we decreased at least one of the problems of coupling by making our services communicate with each other _asynchronously_? That is, we can send messages to each other and not wait for a response.
+
+I will go into detail on this elsewhere since with this topic we are no longer in a sort of "history", but approaching the "now".
