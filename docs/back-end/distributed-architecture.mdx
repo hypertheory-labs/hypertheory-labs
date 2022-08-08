@@ -1,6 +1,7 @@
 ---
 title: Distributed Systems Architecture
 author: Jeff Gonzalez
+sidebar_position: 2
 ---
 
 In this explainer, I will be talking about the architecture of a distributed system. It will be a bit
@@ -16,7 +17,7 @@ Especially in large enterprises, you will see, if you dig deeply enough _each of
 
 However, without having _some_ understanding of the problems each of these architectural patterns were intending to solve, we might mistakenly think that since one style is still in use, it's a good idea to continue to use that style. It is in that spirit this is presented.
 
-## Host Based Systems (Pre Distributed Systems) 
+## Host Based Systems (Pre Distributed Systems)
 
 In the early days of software development, depending on what world you were working in, you were either building desktop applications that would be installed on a person's PC, along with the databse. Tools like dBase by Ashton Tate, or, later, Access by Microsoft, were common tools for this. There was no suggestion of shared data (concurrency). You owned the application and the data.
 
@@ -214,6 +215,19 @@ Largely big enterprises doubled down on the Lego brick idea. They would create t
 :::warning Service Oriented Architecture is Aligned with RPCs
 The _default_ integration between services in an SOA is the remote procedure call. Service A asks Service B for something by calling it and waiting for a response. This isn't _necessiated_ by SOA, but it is the most obvious choice for most developers and architects. Its easy to reason about, and if you have the privelege of having your code live in a dev or test environment with minimal real world chaos (network partition failure, etc.) it makes a lot of sense. During this period we were also, as an industry, very fractured between the make believe world of "Development", and the real world (read: where the code runs) of the Infrastructure or (Operations) team. If it broke in production, it was their fault. And it would always break in production. The more you distribute an application, the more it will fail. **QED**.
 :::
+
+SOAs usually provide four different types of services:
+
+- Functional Services
+  - The "business" stuff.
+- Enterprise Services
+  - Integration stuff.
+- Application Services
+  - Aggregate enterprise, functional, and infrastructure services for specific apps.
+- Infrastructure Services
+  - Security, authentication, compliance, etc.
+
+These services, unsurprisingly, are usually described in _layers_ of functionality. Services nested more deeply (farther downstream) should have more _reuse_.
 
 ## Enter Vertical Slice Architecture
 

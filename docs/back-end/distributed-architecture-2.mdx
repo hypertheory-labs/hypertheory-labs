@@ -1,322 +1,252 @@
 ---
-title: Distributed Systems Primer
+title: The Path to DDD and Microservices
 author: Jeff Gonzalez
-sidbar_position: 4
+description: Universal API Gateways to DDD
+sidebar_position: 3
 ---
 
+I teach and practice Cloud Native Development.
 
-
-## Prelude
-
-I teach Cloud Native Development.
-
-[toc/DEFINITION.md at main · cncf/toc (github.com)](https://github.com/cncf/toc/blob/main/DEFINITION.md)
-
-:::note Cloud Native Technologies
- empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Containers, service meshes, microservices, immutable infrastructure, and declarative APIs exemplify this approach.
+:::note Cloud Native Technologies...
+...empower organizations to build and run scalable applications in modern, dynamic environments such as public, private, and hybrid clouds. Containers, service meshes, microservices, immutable infrastructure, and declarative APIs exemplify this approach.
 These techniques enable loosely coupled systems that are resilient, manageable, and observable. Combined with robust automation, they allow engineers to make high-impact changes frequently and predictably with minimal toil.
 The Cloud Native Computing Foundation seeks to drive adoption of this paradigm by fostering and sustaining an ecosystem of open source, vendor-neutral projects. We democratize state-of-the-art patterns to make these innovations accessible for everyone.
+[Cloud Native Computing Foundation](https://github.com/cncf/toc/blob/main/DEFINITION.md)
 :::
 
-## Narrative
+## The Universal API Gateway
 
-We need to talk about *architecture* and *technology*.
+One of the outcomes of SOA is the idea of the "Universal API Gateway".
 
-:::info Applying some of this technology without understanding and migrating your architecture will at best give you limited benefit, at worst, create a nightmare.
-:::
+The idea is basically this:
 
+> "After enough time and work in factoring the IT side of our business into a set of services (functional, enterprise, application, and infrastructure), it will be a _trivial_ matter for application developers to aggregate those services in a variety of ways to create new applications, much like a child putting together a Lego set."
 
-:::tip What do we want? "FREEDOM!". Freedom for WHAT? 
-**To Make the Business Happy** - to deliver high quality software quickly.
-:::
+![Lego Architecture Set showing a pristine architectural rendering of a famous piece of architecture](/img/services/lego1.jpg)
 
+That metaphor has never really worked for me because, as the photo shows, Lego sets are designed with a specific endpoint in mind. Sure, you can take a big bucket of _random_ Lego bricks and build something, but it isn't going to look like what you see above.
 
+![Lego model built without a random kit, showing a messy, disshelved approximation of a town, or something](/img/services/lego2.png)
 
+There are _technical requirements_ that are certainly addressed by a Universal API Gateway. Things like security, logging, compliance, etc.
 
-### The Backstory
-
-Distributed applications.
-
-- Host Based
-- Two-Tier (Client/Server)
-- N-Tier
-	- Emphasize the *location transparency* and *application servers*
-	- "Business Layer", "Data Layer"
-	- Problems
-		- Database Bottleneck
-		- Network Saturation
-		- DTC (Distributed Transaction Coordinator)
-		- "Back to the Mainframe"
-	- SOAP
-		- Begot XML Web Services
-		- XML Web Services said you don't need an application server, just use your Web Server!
-		- "Standards" based protocols (HTTP) read: bypass proxy.
-		- Never the plan - WCF let you do TCP, but nobody cared.
-- SOA
-	- We could talk as a "community"
-	- Got rid of Location Transparency (but still mostly kept RPC)
-	- The "dream" of Lego Bricks could be realized!
-
-
-
-> **The youth gets together his materials to build a bridge to the moon, or, perchance, a palace or temple on the earth, and, at length, the middle-aged man concludes to build a woodshed with them** Thoreau
-
-
-YAGNI might be too easily abused, but most "enterprise" software architecture is some abomination of the opposite "We know exactly what you are going to need before you do. And if it doesn't come from us, you don't need it.".
-
-
-## What are We Looking for In a Universal API Gateway?
-
-
-There are *technical requirements* that are certainly addressed by a Universal API Gateway. Things like security, logging, compliance, etc. 
-
-But the mistake behind a Universal API Gateway is the hope for a **Unified Canonical Model**.  That there can be "one true" way to represent data and do things with that data. 
+But the mistake behind a Universal API Gateway is the hope for a **Unified Canonical Model**. That there can be "one true" way to represent data and do things with that data.
 
 :::warning A Unified Canonical Model will be outgrown quickly.
- And when it is, developers *still* have to ship software. Life will find a way. They will bypass your beloved gateway and pull data from databases, or, if you are lucky, they will continue to add very *specialized* APIs to your "Universal Gateway" that are only used by one application.
+And when it is, developers _still_ have to ship software. Life will find a way. They will bypass your beloved gateway and pull data from databases, or, if you are lucky, they will continue to add very _specialized_ APIs to your "Universal Gateway" that are only used by one application.
 :::
 
+Each of these following items will have to be accounted for. At some level they actually _are_ super important.
 
-Each of these following items will have to be accounted for. At some level they actually *are* super important. 
+### Authoritarian, "We Know Best", and You Don't Need to Think.
 
-### Authoritarian, "we know", and you don't need to think.
-The "smart" people will do the hard work. This is too much for you. This will make it *easier*.
+The "smart" people will do the hard work. This is too much for you. This will make it _easier_.
 
 :::note Positive Take
-What they want it developers to focus on what we *want* to focus on. Providing business value.
+What they want it developers to focus on what we _want_ to focus on. Providing business value.
 :::
 
 ### Compliance / Security / Etc.
+
 We have rules. The rules are invariant. Some of these are for compliance with government and industry regulations. Some are for security. We don't want this replicated everywhere.
 
-:::tip It's true. A domain expert in one area should dedicate her brain to that business domain. Technical requirements should be as "ambient" as possible. They should just be a "given", and developers shouldn't have to think about that too much.
-:::
+This is probably, at least _currently_, the best argument for sticking with a Universal API Gateway. However great strides are being made in the Kubernetes world for a much cleaner solution for these problems than those currently afforded by Gateway vendors. Customer Kubernetes CRDs allow developers to _annotate_ their deployments, using _Aspect Oriented Programming_ to add functionality to their deployments, including security, logging, compliance, and observability.
 
 ### DRY (Don't Repeat Yourself)
-Pretty much a subset of the above, but if the *business* already paid us to write the code that keeps customer information up to date, we shouldn't be charging them to do that "same" thing *n* number of times.
+
+Pretty much a subset of the above, but if the _business_ already paid us to write the code that keeps customer information up to date, we shouldn't be charging them to do that "same" thing _n_ number of times.
 
 :::tip The Fallacy of Reuse
-This has been around a long time. Djikstra in like 1968 "Complexity controlled by hierarchical ordering of function and variability." Object-Orientation *really* pushed this on us.  The temptation to *generalize* in software is the root of all evil. To misquote another famous computer scientist, Donald Knuth.
-::: 
+This has been around a long time. Djikstra in like 1968 "Complexity controlled by hierarchical ordering of function and variability." Object-Orientation _really_ pushed this on us. The temptation to _generalize_ in software is the root of all evil. To misquote another famous computer scientist, Donald Knuth.
+:::
 
-The truth is, generalizations at best are an emergent property of software. If they are are insisted upon *a-priori* they are almost always wrong.
+The truth is, generalizations at best are an emergent property of software. If they are are insisted upon _a-priori_ they are almost always wrong.
 
 :::info You Need A Customers Current EMail Address
-You make a call to the Universal Gateway to get a customer. You get back a response with 252 properties on it. You dig through your JSON viewer for hours to figure out how to dig in to get the current email address. Only to find that the customer information you received only has *some* of the data, and not the part with the email address. For that, you have to take a *slice* of this response and call *another* service that will return you contact information for that customer. Buried in there somewhere might be the email address. You'd end up with an slow explosion of RPC calls from one service to another, each one increasing the risk of failure just a little bit.
+You make a call to the Universal Gateway to get a customer. You get back a response with 252 properties on it. You dig through your JSON viewer for hours to figure out how to dig in to get the current email address. Only to find that the customer information you received only has _some_ of the data, and not the part with the email address. For that, you have to take a _slice_ of this response and call _another_ service that will return you contact information for that customer. Buried in there somewhere might be the email address. You'd end up with an slow explosion of RPC calls from one service to another, each one increasing the risk of failure just a little bit.
 :::
-
 
 :::warning REST on the Server Side was Supposed to Help With This
-With that, at least when you got the customer, you'd get a *link* to where the customer information was hiding. You didn't need to dig into the quagmire of swagger docs to find it. Maybe. Your RPC explosion would be an *automated* RPC explosion of code following links!
+With that, at least when you got the customer, you'd get a _link_ to where the customer information was hiding. You didn't need to dig into the quagmire of swagger docs to find it. Maybe. Your RPC explosion would be an _automated_ RPC explosion of code following links!
 :::
 
-
-**Meanwhile** the danged data you need is just sitting there in a table. You can see it! You could just write a SQL statement and get it, but *no*! Business rules! Compliance! IS THIS WHAT I WANTED TO DO AS A SOFTWARE DEVELOPER?!
-
-
-
-
-
-
+**Meanwhile** the danged data you need is just sitting there in a table. You can see it! You could just write a SQL statement and get it, but _no_! Business rules! Compliance! IS THIS WHAT I WANTED TO DO AS A SOFTWARE DEVELOPER?!
 
 ## Domain Driven Design
 
-
-
 Most of these terms are from the "Strategic Section" of Domain Driven Design. They are a way to help us all (IT, Business, Customers) talk about what we do using a "Ubiquitous Language".
-
 
 ### Domain
 
 The business you are in. Banking. Insurance. Car sales. Car manufacturing. Taco Truck. Law Enforcement, Concert Ticket Sales.
 
-
 A domain is defined by it's use of language and metaphor. Banking has "accounts", Insurance has "policies" and "claims", Law Enforcement has "Tickets", but so does concert Ticket Sales.
 
 If you handed the ticket taker at a show a parking ticket expecting to get entry, there would be confusion (and disappointment).
 
-
 ### Subdomain
-If you are big enough, you are in is big enough, it might have lots of little "supporting" businesses. 
+
+If you are big enough, you are in is big enough, it might have lots of little "supporting" businesses.
 Subdomains are just domains that support the whole business in some way.
 
-You need subdomains for the same reason you need a clearly defined domain. The language means something different in one part of your organization than in another part.  For example, in an insurance quoting subdomain, a primary thing might be the "Product". The thing we are selling. There will be *tons* of attendant technology developed over years to actualize that concept. But in another domain in the same business, it might be completely irrelevant. For example, in the claims processing part, it might not come up at all. Even something as seemingly general as a "customer" might mean something different across different subdomains. In the marketing subdomain, it might be a target for advertising or retention, in the billing, it might be someone with cash that owes us. In the analytics sub domain it might be a fictional persona we are building models to see if there is a way we compel them to either become a customer (in the billing sense), remain a customer (in the marketing sense), or disabuse them of the idea of becoming a customer at all (in quoting sense).
+You need subdomains for the same reason you need a clearly defined domain. The language means something different in one part of your organization than in another part. For example, in an insurance quoting subdomain, a primary thing might be the "Product". The thing we are selling. There will be _tons_ of attendant technology developed over years to actualize that concept. But in another domain in the same business, it might be completely irrelevant. For example, in the claims processing part, it might not come up at all. Even something as seemingly general as a "customer" might mean something different across different subdomains. In the marketing subdomain, it might be a target for advertising or retention, in the billing, it might be someone with cash that owes us. In the analytics sub domain it might be a fictional persona we are building models to see if there is a way we compel them to either become a customer (in the billing sense), remain a customer (in the marketing sense), or disabuse them of the idea of becoming a customer at all (in quoting sense).
 
-A "domain" is defined as "a specified sphere of activity or knowledge".  A "model" is an example to follow. 
+A "domain" is defined as "a specified sphere of activity or knowledge". A "model" is an example to follow.
 
-Using the wrong model in your domain means you are borrowing inappropriate amounts of complexity. And that doesn't come free. 
+Using the wrong model in your domain means you are borrowing inappropriate amounts of complexity. And that doesn't come free.
 
+So, Subdomains are a _segment_ of the domain. They are a _strategic_ grouping of business functionality.
 
-So, Subdomains are a *segment* of the domain. They are a *strategic* grouping of business functionality.
+A good business has a clear boundary. You don't ask the Taco Truck for Insurance, you don't ask Law Enforcement for good seats at the next Rage Against the Machine concert. They have well defined _inputs_, and well defined _outputs_.
 
-A good business has a clear boundary. You don't ask the Taco Truck for Insurance, you don't ask Law Enforcement for good seats at the next Rage Against the Machine concert.  They have well defined *inputs*, and well defined *outputs*. 
+If your business is large enough, it will need subdomains. Same rules here. A subdomain is _responsible_ for an aspect of the overall business. The Customers subdomain is a business inside of our business that handles all customer related stuff. The Web Presence subdomain is responsible for the website.
 
-If your business is large enough, it will need subdomains. Same rules here. A subdomain is *responsible* for an aspect of the overall business. The Customers subdomain is a business inside of our business that handles all customer related stuff. The Web Presence subdomain is responsible for the website. 
-
-Each subdomain has it's own language (models). It's own technology, it's own way of going about its business. It has a protocol in which other subdomains can collaborate with it. Ask for work to be done, notify it of something it might find interesting (or vital), and it has outputs. 
+Each subdomain has it's own language (models). It's own technology, it's own way of going about its business. It has a protocol in which other subdomains can collaborate with it. Ask for work to be done, notify it of something it might find interesting (or vital), and it has outputs.
 
 But we are talking MBA stuff here, right? There still is no real code. We need some solutions, some code, within a subdomain to enable it to do what it promises to do.
 
-
-
 ### Bounded Context
-"...a subdomain is a segment of the domain, and a *bounded context* is a segment of the solution" ([Discovering the Domain Architecture | Microsoft Press Store](https://www.microsoftpressstore.com/articles/article.aspx?p=2248811&seqNum=3#:~:text=Likewise%2C%20a%20subdomain%20is%20a,a%20segment%20of%20the%20solution.))
 
-A subdomain is at least (or should be at least) *one bounded context*. We use the phrase "bounded context" as:
+"...a subdomain is a segment of the domain, and a _bounded context_ is a segment of the solution" ([Discovering the Domain Architecture | Microsoft Press Store](https://www.microsoftpressstore.com/articles/article.aspx?p=2248811&seqNum=3#:~:text=Likewise%2C%20a%20subdomain%20is%20a,a%20segment%20of%20the%20solution.))
+
+A subdomain is at least (or should be at least) _one bounded context_. We use the phrase "bounded context" as:
 
 - Bounded
-	- It's a black box. There is a boundary around this solution. There is are protocols for communicating with this solution, and protocols on how it will respond. How it works is nobody's business. Because it will change. All the time.
+  - It's a black box. There is a boundary around this solution. There is are protocols for communicating with this solution, and protocols on how it will respond. How it works is nobody's business. Because it will change. All the time.
 - Context
-	- The context is the meaning for the models within this subdomain. Again, the concept of "Ticket" would mean something different in the *context* of a Law Enforcement than it does in Concert Promotions.
+  - The context is the meaning for the models within this subdomain. Again, the concept of "Ticket" would mean something different in the _context_ of a Law Enforcement than it does in Concert Promotions.
 
 ### DDD Relational Patterns
 
-We are talking software here. Not someone coming up to buy a taco or pay a traffic violation. Bounded Contexts have to *relate* to one another.
+We are talking software here. Not someone coming up to buy a taco or pay a traffic violation. Bounded Contexts have to _relate_ to one another.
 
 Your bounded contexts will be in one or more (and probably "more") of these relationships with other bounded contexts.
 
-* **Customer or Supplier**
-	* One bounded context needs a *thing* from another. They are the *customer*. They have a meeting with the owners of the *Supplier* bounded context and create a protocol for getting that thing (work, data, etc.) done. 
-- **Partnership**
-	- Two different bounded contexts are sort of the customer and supplier for each other. Many meetings.
-- **Conformist**.
-	- You get tired of meetings. The upstream service provides pretty close to what you need. You will just conform to their offerings. 
-- **Shared Kernel**
-	- You are doing something so close to what another bounded context is doing that you just nab some of their code and use it. You make a "shared library", and send each other pull requests over time. 
-- **Separate Ways**
-	- Not the Journey album.
-	- The models are too different between two bounded contexts. You just throw in the towel and do your own thing.
+- **Customer or Supplier**
+  - One bounded context needs a _thing_ from another. They are the _customer_. They have a meeting with the owners of the _Supplier_ bounded context and create a protocol for getting that thing (work, data, etc.) done.
 
+* **Partnership**
+  - Two different bounded contexts are sort of the customer and supplier for each other. Many meetings.
+* **Conformist**.
+  - You get tired of meetings. The upstream service provides pretty close to what you need. You will just conform to their offerings.
+* **Shared Kernel**
+  - You are doing something so close to what another bounded context is doing that you just nab some of their code and use it. You make a "shared library", and send each other pull requests over time.
+* **Separate Ways**
+  - Not the Journey album.
+  - The models are too different between two bounded contexts. You just throw in the towel and do your own thing.
 
-The *Conformist* is a downstream bounded context. 
+The _Conformist_ is a downstream bounded context.
 
 Customer -> Supplier
 Supplier -> Customer
 
-
 Partnership <-> Partnership
 
 Conformist -> Open Host
-Open Host -> *don't care*. Take it or leave it.
+Open Host -> _don't care_. Take it or leave it.
 
 Partnership -> (Shared Kernel) <- Partnership
 
->[!question] Which one sounds the most *fun*?
->Open Host! We are GODS!
+:::tip Which one sounds the most _fun_?
+Open Host! We are GODS! That should be our goal.
+:::
 
 How to best evaluate the kind of relationship you are in?
 
 Use the following heuristics:
 
 - Coupling
-	- How easy is it for your bounded context to deploy new versions of your solution without involving others?
-		- Do you get blocked because another bounded context hasn't *supplied* what you need yet?
-		- Are you deploying on someone else's timeline because you are in a *partnership*, or you are *supplying* something they need?
+  - How easy is it for your bounded context to deploy new versions of your solution without involving others?
+    - Do you get blocked because another bounded context hasn't _supplied_ what you need yet?
+    - Are you deploying on someone else's timeline because you are in a _partnership_, or you are _supplying_ something they need?
 - Cohesion
-	- How much of your code, your types, your metaphors, seem *alien*? Like, even someone well versed in your domain would need a thorough explanation of what your service is working with?
-	- You are a conformist. You are borrowing someone else's concepts. Like that time in middle school you got a perm, a member's only jacket, and some parachute pants. Embarrassing.
+  - How much of your code, your types, your metaphors, seem _alien_? Like, even someone well versed in your domain would need a thorough explanation of what your service is working with?
+  - You are a conformist. You are borrowing someone else's concepts. Like that time in middle school you got a perm, a member's only jacket, and some parachute pants. Embarrassing.
 
+:::warning Don't be a Conformist - The ACL
+Consider instead creating an "Anti Corruption Layer". That is a service that is responsible for translating other contexts ideas for things into what you need, what you care about. It also can translate your concepts to what other people need. The problem with conformists is they become the new "norm". Then everyone is wearing parachute pants and you just look ridiculous when they go out of style. Maybe your upstream service is an old relational database. You need stuff from it, you need to call "stored procedures", and next thing you know you have 50 services in your domain that are absolutely _wedded_ to that monstrosity. Because "That's where the customer data is!" or whatever. Create a service as an anti-corruption layer. Name it something like "super-sparkly-no-sql-sharded-customer-bridge" that each service relies on instead. Someday it might live up to it's name.
+:::
 
-> [!tip] Don't be a Conformist.
-> Consider instead creating an "Anti Corruption Layer". That is a service that is responsible for translating other contexts ideas for things into what you need, what you care about. It also can translate your concepts to what other people need. The problem with conformists is they become the new "norm". Then everyone is wearing parachute pants and you just look ridiculous when they go out of style. Maybe your upstream service is an old relational database. You need stuff from it, you need to call "stored procedures", and next thing you know you have 50 services in your domain that are absolutely *wedded* to that monstrosity. Because "That's where the customer data is!" or whatever. Create a service as an anti-corruption layer. Name it something like "super-sparkly-no-sql-sharded-customer-bridge" that each service relies on instead. Someday it might live up to it's name.
+:::tip Law of Demeter
+Don't talk to strangers. Only talk to your friends. Ask your friend for a beer, but don't sneak in through the back door and take one. The most _intimate_ thing a bounded context owns is its data. that isn't for you. Hands off. Don't touch another contexts database. That's creepy and rude.
+:::
 
-
-> [!tip] Law of Demeter
-> Don't talk to strangers. Only talk to your friends. Ask your friend for a beer, but don't sneak in through the back door and take one. The most *intimate* thing a bounded context owns is its data. that isn't for you. Hands off. Don't touch another contexts database. That's creepy and rude.
-
-
-I can hear you now. **But you sliced up our glorious domain! Nothing is close at hand! I **need** that data*!
+I can hear you now. **But you sliced up our glorious domain! Nothing is close at hand! I **need\*_ that data_!
 
 Consider becoming a customer.
 
-Or better, liberate that data. Create yourself a database with *just what you need*. And bring it *close at hand*. There are *ways* to make sure it is always up to date. Don't worry about that yet. We'll get there.
+Or better, liberate that data. Create yourself a database with _just what you need_. And bring it _close at hand_. There are _ways_ to make sure it is always up to date. Don't worry about that yet. We'll get there.
 
-This is a real relationship *power move*. Instead of setting up a situation where you have to go, hat in hand, to some other bounded context *continually* asking for more stuff. You say "Here, you see this database? That's what we need from your data. I want you to supply that to me. Now, and forever."
+This is a real relationship _power move_. Instead of setting up a situation where you have to go, hat in hand, to some other bounded context _continually_ asking for more stuff. You say "Here, you see this database? That's what we need from your data. I want you to supply that to me. Now, and forever."
 
 If you think that sounds like wishful thinking, just trust me on this for a while.
 
-
-
-
-
-
-
-
->[!important] EVERYTHING is on the Same Playing Field. You are in a relationship like this even if your downstream or upstream bounded context is some database.
-
+:::tip EVERYTHING is on the Same Playing Field.
+You are in a relationship like this even if your downstream or upstream bounded context is some database. To your app, everything is an _attached resource_
+:::
 
 ### Implementing the Bounded Context
 
-The code you write to implement a bounded context (provide the solution for a domain) is up to you and your team/platform. There is no single "right" way to do it. While the techniques outlined below seem like a *progression*, they are only that in the sense that there are more *options* to chose from now than there were just a few years ago.
+The code you write to implement a bounded context (provide the solution for a domain) is up to you and your team/platform. There is no single "right" way to do it. While the techniques outlined below seem like a _progression_, they are only that in the sense that there are more _options_ to chose from now than there were just a few years ago.
 
 #### Monoliths
+
 One code base. One unit of deployment. It does it all.
 
 #### Modular Monoliths
+
 One code base, perhaps, but functionality segmented by language/programming environment constructs like Libraries (DLLs) or JAR files that take responsible for an "area" of the functionality in the monolith.
-While the modules *could* be independently deployable (using library tools like Nuget, etc.) they are still usually only elevated as a whole. Our confidence in upgrading one part of the application separate the rest is usually not high enough to allow for "piecemeal" updates. Though it does happen.
+While the modules _could_ be independently deployable (using library tools like Nuget, etc.) they are still usually only elevated as a whole. Our confidence in upgrading one part of the application separate the rest is usually not high enough to allow for "piecemeal" updates. Though it does happen.
 
 #### SOA
-For issues of scaling, security, and different paces of deployment, the modular monolith can be *deconstructed* into independently deployable services that communicate with each other using RPC-like semantics.
 
->[!caution] Be careful you don't accidentally recreate a Universal API Gateway. If your solution for your bounded context gets to this level, you should probably just name it and say our subdomain is now made up of more than one bounded context.
->If you goal in doing SOA is an extension of the "OOP" mindset of "everything is said once and only once" you will end up with lots of small services. The problem with that, as in OOP, is *everything happens somewhere else*. You end up with a lot of **coupling**. A change in one service could break other services. An outage in one service could take down *everything*.  Remember the goal of "location transparency" was that we could pretend we are in a monolith, but really the code is running somewhere else. That isn't very realistic. In that it doesn't hold up to reality. "Somewhere else" means changes in some other code impact your code. Lack of availability in someone else's code becomes *your problem*.
+For issues of scaling, security, and different paces of deployment, the modular monolith can be _deconstructed_ into independently deployable services that communicate with each other using RPC-like semantics.
 
-SOAs usually provide four different types of services:
-
-- Functional Services
-	- The "business" stuff.
-- Enterprise Services
-	- Integration stuff.
-- Application Services
-	- Aggregate enterprise, functional, and infrastructure services for specific apps.
-- Infrastructure Services
-	- Security, authentication, compliance, etc.
-- 
+:::warning The Zombie Resurrection of the API Gateway
+If your solution for your bounded context gets to this level, you should probably just name it and say our subdomain is now made up of more than one bounded context.
+If you goal in doing SOA is an extension of the "OOP" mindset of "everything is said once and only once" you will end up with lots of small services. The problem with that, as in OOP, is _everything happens somewhere else_. You end up with a lot of **coupling**. A change in one service could break other services. An outage in one service could take down _everything_. Remember the goal of "location transparency" was that we could pretend we are in a monolith, but really the code is running somewhere else. That isn't very realistic. In that it doesn't hold up to reality. "Somewhere else" means changes in some other code impact your code. Lack of availability in someone else's code becomes _your problem_.
+:::
 
 #### Microservices
 
-"Microservices are SOA done right". 
+"Microservices are SOA done right".
 
 Sort of.
 
-Microservices *deemphasize* some of the conventional wisdom of SOA.
+Microservices _deemphasize_ some of the conventional wisdom of SOA.
 
-> [!warning] We know *duplication is bad*
-> Microservices deemphasize the goal of "reuse". But we know reuse is coupling and conforming. Copy and paste, duplication of data, all that - better in the mind of a Microservices developer.
+:::warning We know _duplication is bad_
+Microservices deemphasize the goal of "reuse". But we know reuse is coupling and conforming. Copy and paste, duplication of data, all that - better in the mind of a Microservices developer.
+:::
 
-> [!warning] We know how to make APIs
-> In SOA we use a lot of RPCs. Service A calls Service B, which calls Service C, D, and Sometimes E. It's a bit confusing, but you can easily reason through the *cause and effect*. In Microservices, however, we are less arrogant about it. If I am doing something that is a *cause* of some other service to do work, then that feels too intimate. Too much coupling. Instead, Microservices prefer loosely coupled patterns like messaging (Pub/sub, etc.) to decouple their work.
+:::warning We know how to make APIs
+In SOA we use a lot of RPCs. Service A calls Service B, which calls Service C, D, and Sometimes E. It's a bit confusing, but you can easily reason through the _cause and effect_. In Microservices, however, we are less arrogant about it. If I am doing something that is a _cause_ of some other service to do work, then that feels too intimate. Too much coupling. Instead, Microservices prefer loosely coupled patterns like messaging (Pub/sub, etc.) to decouple their work.
+:::
 
-> [!warning] We know Data Duplication is Bad
-> Why is that? Are hard drives expensive? The real reason data duplication is considered bad is that we have held on to a promise that data can be both available *and* consistent.  We are a generation of software developers that have an ideology (unknown basis for our thinking) based on the promise of *Transactional Consistency*. In reality, there is only one place the data is ever consistent in a distributed system, and that is in the bits written to the hard drive on the databases storage. Everywhere else is a copy of that data, a cache, a representation. In Microservices we face up to that. We don't make promises we can't keep.  Microservice architecture duplicates data everywhere, but so did your SOAs. You just pretended they didn't. 
+:::warning We know Data Duplication is Bad
+Why is that? Are hard drives expensive? The real reason data duplication is considered bad is that we have held on to a promise that data can be both available _and_ consistent. We are a generation of software developers that have an ideology (unknown basis for our thinking) based on the promise of _Transactional Consistency_. In reality, there is only one place the data is ever consistent in a distributed system, and that is in the bits written to the hard drive on the databases storage. Everywhere else is a copy of that data, a cache, a representation. In Microservices we face up to that. We don't make promises we can't keep. Microservice architecture duplicates data everywhere, but so did your SOAs. You just pretended they didn't.
+:::
 
+In a strange irony, in terms of what a well-factored Microservice _does_, it is often larger in scope that what many SOA services do.
 
-In a strange irony, in terms of what a well-factored Microservice *does*, it is often larger in scope that what many SOA services do. 
+What really differentiates Microservices from SOA or other techniques, in my mind, is that we _really_ emphasize their need to be _independently deployable._
 
-What really differentiates Microservices from SOA or other techniques, in my mind, is that we *really* emphasize their need to be *independently deployable.*
-
-We say "We will settle for nothing less than being able to put a new version of our service into production any time we damned well feel like it.".  And sometimes we'll have two or three versions of the same thing running in production at the same time. And we aren't going to get a note from mom saying that it is ok. We aren't going to have big meetings with our "partners", or our "customers", or "our suppliers" to do it. 
+We say "We will settle for nothing less than being able to put a new version of our service into production any time we damned well feel like it.". And sometimes we'll have two or three versions of the same thing running in production at the same time. And we aren't going to get a note from mom saying that it is ok. We aren't going to have big meetings with our "partners", or our "customers", or "our suppliers" to do it.
 
 We are going to accomplish this by:
 
 1. Emphasizing the "Bounded" part of bounded context.
-	1. We will honor our contracts. Contracts are of prime importance and the #1 design consideration of Microservices.
-	2. We will always keep the "what" separate from the "how". The "what" (the promises of our service) will expand, but stay stable. The how we do it will change. Frequently. 
-	3. We will favor many small, low-risk elevates over big risky ones. Sometimes we'll screw up, but it will be *minor* screw ups, and we will catch them early by making sure our services are *observable*. We will watch how the do, how they perform, as we slowly coax them out the door to "showtime".
-
-
-
-
-
+   1. We will honor our contracts. Contracts are of prime importance and the #1 design consideration of Microservices.
+   2. We will always keep the "what" separate from the "how". The "what" (the promises of our service) will expand, but stay stable. The how we do it will change. Frequently.
+   3. We will favor many small, low-risk elevates over big risky ones. Sometimes we'll screw up, but it will be _minor_ screw ups, and we will catch them early by making sure our services are _observable_. We will watch how the do, how they perform, as we slowly coax them out the door to "showtime".
 
 #### Event Streaming
 
-No Customers! No Suppliers! No partnership!  Our apps will be integrated into the living, breathing whole of the ecosystem in which they live. They will respond to those things that seem important to it. It will announce things others might think are important. 
+No Customers! No Suppliers! No partnership! Our apps will be integrated into the living, breathing whole of the ecosystem in which they live. They will respond to those things that seem important to it. It will announce things others might think are important.
 
 Narrative:
 
-Us: So, my bounded context needs some customer data. 
+Us: So, my bounded context needs some customer data.
 Customer Domain: Sure, we have an API for that.
 Us: Cool, but I I need just the customers that live in these zip codes, and have purchased this much stuff in this many days, and only if there purchase didn't include these particular widgets.
 Customer Domain: Uh, I guess we could create an API or something for that. Let's set up a meeting with the data architects, and ...
@@ -326,13 +256,6 @@ Us: Ok, so we'll poll that API endpoint you will make for us, what, ever 48 seco
 Customer Domain: Well, maybe we could just give you a database login. I mean, we change the schema some, but we'll put you on a list to notify if we do...
 Us: No thank you.
 
+In an Event Streaming world, that customer data would just be "out there", as a sort of living breathing stream of things. Every time something _intersting_ happens to a customer, another entry is made at the end of the stream. "Hey, Bob Smith? Customer 99938938? He now wants to be called Sue". And oh, Sue Smith just bought some stuff.
 
-In an Event Streaming world, that customer data would just be "out there", as a sort of living breathing stream of things. Every time something *intersting* happens to a customer, another entry is made at the end of the stream. "Hey, Bob Smith? Customer 99938938? He now wants to be called Sue". And oh, Sue Smith just bought some stuff.
-
-Our applications can sort of *subscribe* to the stuff they are interested in, and *react* as they see fit. Data in motion, baby.
-
-
-
-
-
-
+Our applications can sort of _subscribe_ to the stuff they are interested in, and _react_ as they see fit. Data in motion, baby.
