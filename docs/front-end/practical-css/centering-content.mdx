@@ -1,0 +1,82 @@
+---
+title: Practical CSS - Centering Content
+author: Lee Cooper
+---
+
+# Centering Content
+
+## Centering with Flexbox
+
+### Centering along the x-axis
+
+CSS:
+
+```css
+.someClass {
+  display: flex;
+  justify-content: center;
+}
+```
+
+Tailwind:
+
+```html
+<div class="flex justify-center"></div>
+```
+
+### Centering on y-axis
+
+CSS:
+
+```css
+.someClass {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+```
+
+Tailwind:
+
+```html
+<div class="flex flex-col justify-center"></div>
+```
+
+### X & Y Axis
+
+CSS:
+
+```css
+.someClass {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+```
+
+Tailwind:
+
+```html
+<div class="flex items-center justify-center"></div>
+```
+
+## Centering with Grid
+
+CSS
+
+```css
+.someClass {
+  display: grid;
+  place-items: center;
+}
+```
+
+Tailwind:
+
+```html
+<div class="grid place-items-center"></div>
+```
+
+## Centering with Float
+
+Don't.
