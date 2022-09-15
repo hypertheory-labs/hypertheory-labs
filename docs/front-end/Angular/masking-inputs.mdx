@@ -57,7 +57,7 @@ See the [Stackblitz](https://stackblitz.com/edit/github-u8yr1l?file=src%2Fapp%2F
 
 **Template**
 
-```html
+```html title="/src/app/entry-form/entry-form.component.html" {7,9}
 <input
   type="text"
   id="ssn"
@@ -72,7 +72,7 @@ See the [Stackblitz](https://stackblitz.com/edit/github-u8yr1l?file=src%2Fapp%2F
 
 **Component**
 
-```typescript
+```typescript title="/src/app/entry-form/entry-form.component.ts"
 ssnPattern = {
   Y: { pattern: new RegExp("\\d"), symbol: "X" },
   S: { pattern: new RegExp("\\d") },
