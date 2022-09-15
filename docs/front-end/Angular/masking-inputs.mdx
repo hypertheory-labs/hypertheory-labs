@@ -1,0 +1,84 @@
+---
+title: Masking Inputs
+author: Jeff Gonzalez
+description: Masking inputs in Angular
+---
+
+# Masking Inputs
+
+**Case**: You want to obscure sensitive data on the screen to confound shoulder surfers all up in your business, but also not create accessibility roadblocks.
+
+Certain data should be occluded on the screen when viewing that data. When that data is provided by the user, having the input apply the mask can be frustrating. Using the [ngx-mask](https://www.npmjs.com/package/ngx-mask) library, we can mask inputs on the screen, but not mask the data when it is provided by the user, and only mask it when the input loses focus, or on request by the user.
+
+<iframe
+  style={{ width: "100%", height: "500px" }}
+  src="https://stackblitz.com/edit/github-u8yr1l?embed=1&file=src/app/entry-form/entry-form.component.ts&view=preview"
+></iframe>
+
+## Process
+
+1. Install the library
+
+```bash
+npm install ngx-mask
+```
+
+2. Import the library into your module
+
+```typescript
+import { NgModule } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
+import { BrowserModule } from "@angular/platform-browser";
+//highlight-next-line
+import { NgxMaskModule } from "ngx-mask";
+
+import { AppComponent } from "./app.component";
+import { EntryFormComponent } from "./entry-form/entry-form.component";
+
+@NgModule({
+  declarations: [AppComponent, EntryFormComponent],
+  imports: [
+    BrowserModule,
+    ReactiveFormsModule,
+    //highlight-next-line
+    NgxMaskModule.forRoot(),
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+```
+
+3. Use the library in your component
+
+See the [Stackblitz](https://stackblitz.com/edit/github-u8yr1l?file=src%2Fapp%2Fentry-form%2Fentry-form.component.ts,src%2Fapp%2Fapp.module.ts) for the form.component.ts and the [form.component.html](https://stackblitz.com/edit/github-u8yr1l?file=src%2Fapp%2Fentry-form%2Fentry-form.component.html).
+
+4. The pattern referenced in the template is defined in the component class.
+
+**Template**
+
+```html
+<input
+  type="text"
+  id="ssn"
+  (focus)="toggleShowSsn()"
+  (blur)="ssnBlur()"
+  formControlName="ssn"
+  [patterns]="ssnPattern"
+  [hiddenInput]="hideSsn"
+  mask="YYY-YY-SSSS"
+/>
+```
+
+**Component**
+
+```typescript
+ssnPattern = {
+  Y: { pattern: new RegExp("\\d"), symbol: "X" },
+  S: { pattern: new RegExp("\\d") },
+};
+```
+
+:::tip
+This pattern says "replace any instances of 'Y' with an X and leave any instances of 'S' alone."
+:::
