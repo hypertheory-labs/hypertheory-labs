@@ -95,7 +95,6 @@ const config = {
             position: "left",
             label: "Learn",
           },
-          { to: "/blog", label: "Blog", position: "left" },
           {
             to: "/workshops",
             label: "Workshops",
@@ -106,6 +105,7 @@ const config = {
             label: "Labs",
             position: "left",
           },
+          { to: "/blog", label: "Blog", position: "left" },
           // {
           //   to: "/staff",
           //   label: "Staff",
