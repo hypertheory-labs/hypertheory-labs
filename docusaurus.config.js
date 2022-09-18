@@ -106,13 +106,13 @@ const config = {
             label: "Labs",
             position: "left",
           },
+          // {
+          //   to: "/staff",
+          //   label: "Staff",
+          //   position: "right",
+          // },
           {
-            to: "/staff",
-            label: "Staff",
-            position: "right",
-          },
-          {
-            href: "https://github.com/facebook/docusaurus",
+            href: "https://github.com/hypertheory-labs/hypertheory-labs",
             label: "GitHub",
             position: "right",
           },
@@ -122,11 +122,19 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
+            title: "Sections",
             items: [
               {
-                label: "Tutorial",
+                label: "Learn",
                 to: "/docs/intro",
+              },
+              {
+                label: "Workshops",
+                to: "/workshops",
+              },
+              {
+                label: "Labs",
+                to: "/labs",
               },
             ],
           },
@@ -135,11 +143,11 @@ const config = {
             items: [
               {
                 label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
+                href: "https://discord.gg/NWksZJAh",
               },
               {
                 label: "Twitter",
-                href: "https://twitter.com/docusaurus",
+                href: "https://twitter.com/hypertheorylabs",
               },
             ],
           },
