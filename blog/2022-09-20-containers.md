@@ -1,11 +1,13 @@
 ---
-title: Containers
-author: Jeff Gonzalez
-description: Background on the problems solved by containers
-sidebar_position: 7
+slug: container-background
+title: Container Background
+authors: [jeff]
 ---
 
-# Containers
+
+:::tip
+Note, for some example `Dockerfiles`, [See /docs/back-end/dockerfiles](/docs/back-end/dockerfiles)
+:::
 
 When you run applications on servers in production, the safest way is at a minimum one server per application. That way that one application has little opportunity to negatively impact any other applications on that machine. Use up all the memory, the hard drive, access stuff it shouldn’t be accessing, etc. That would be awesome. And with unlimited resources, maybe a good way to do it. But _wow_ would that be expensive!
 

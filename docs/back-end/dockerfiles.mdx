@@ -1,0 +1,32 @@
+---
+title: Dockerfiles
+author: Jeff Gonzalez
+sidebar_position: 89
+---
+
+:::tip Background
+To read a little bit about containers, see [Containers Background](/blog/container-background)
+:::
+
+## Dotnet Dockerfile
+
+```docker
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build-env
+WORKDIR /app
+    
+# Copy csproj and restore as distinct layers
+COPY *.csproj ./
+RUN dotnet restore
+    
+# Copy everything else and build
+COPY ../engine/examples ./
+RUN dotnet publish -c Release -o out
+    
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+WORKDIR /app
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "aspnetapp.dll"]
+```
+
+## Angular Dockerfile
