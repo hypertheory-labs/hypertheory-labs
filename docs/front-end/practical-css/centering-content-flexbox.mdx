@@ -1,17 +1,17 @@
 ---
-title: Practical CSS - Centering Content
+title: Centering Content - Flexbox
 author: Lee Cooper
 ---
 
-# Centering Content
+# Centering Content with Flexbox
 
-## Centering with Flexbox
+## Horizontal Centering
 
-### Centering along the x-axis
-
-**Case:** Grace, the UX designer, ran a user UX lab for the articles page.
+**Case:** Grace, the UX designer, ran a usability lab for the articles page.
 Based on user feedback, she has asked you to center the `h1` article title
 on the articles page so that it is displayed more prominently to readers.
+
+**Task:** Center the article title horizontally using flexbox.
 
 <iframe
   style={{ width: '100%', height: '500px' }}
@@ -33,13 +33,14 @@ Tailwind:
 <div class="flex justify-center"></div>
 ```
 
-### Centering on y-axis
+## Vertical Centering
 
 **Scenario:** Dembe, the tech lead, identified that the icon and the navigation items are not vertically centered in the nav bar.
-One of the stakeholders has a keen eye for detail, and Dembe knows
-that it will be flagged in the review if it's not fixed.
+One of the stakeholders has a keen eye for detail, and Dembe knows that it will be flagged in the review if it's not fixed.
 
 He's asked you to provide a fix before the review later today.
+
+**Task:** Center the navigation item text and icon vertically within the nav bar.
 
 <iframe
   style={{ width: '100%', height: '500px' }}
@@ -51,15 +52,14 @@ CSS:
 ```css
 .someClass {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
 }
 ```
 
 Tailwind:
 
 ```html
-<div class="flex flex-col justify-center"></div>
+<div class="flex align-items"></div>
 ```
 
 ### X & Y Axis
@@ -79,24 +79,3 @@ Tailwind:
 ```html
 <div class="flex items-center justify-center"></div>
 ```
-
-## Centering with Grid
-
-CSS
-
-```css
-.someClass {
-  display: grid;
-  place-items: center;
-}
-```
-
-Tailwind:
-
-```html
-<div class="grid place-items-center"></div>
-```
-
-## Centering with Float
-
-Don't.
