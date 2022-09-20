@@ -42,7 +42,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
+            "https://github.com/hypertheory-labs/hypertheory-labs",
         },
         blog: {
           showReadingTime: true,
@@ -93,18 +93,18 @@ const config = {
             type: "doc",
             docId: "intro",
             position: "left",
-            label: "Learn",
+            label: "Resources",
           },
-          {
-            to: "/workshops",
-            label: "Workshops",
-            position: "left",
-          },
-          {
-            to: "/labs",
-            label: "Labs",
-            position: "left",
-          },
+          // {
+          //   to: "/workshops",
+          //   label: "Workshops",
+          //   position: "left",
+          // },
+          // {
+          //   to: "/labs",
+          //   label: "Labs",
+          //   position: "left",
+          // },
           { to: "/blog", label: "Blog", position: "left" },
           // {
           //   to: "/staff",
@@ -125,17 +125,17 @@ const config = {
             title: "Sections",
             items: [
               {
-                label: "Learn",
+                label: "Resources",
                 to: "/docs/intro",
               },
-              {
-                label: "Workshops",
-                to: "/workshops",
-              },
-              {
-                label: "Labs",
-                to: "/labs",
-              },
+              // {
+              //   label: "Workshops",
+              //   to: "/workshops",
+              // },
+              // {
+              //   label: "Labs",
+              //   to: "/labs",
+              // },
             ],
           },
           {
