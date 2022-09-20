@@ -21,7 +21,7 @@ on the articles page so that it is displayed more prominently to readers.
 CSS:
 
 ```css
-.someClass {
+.article-title {
   display: flex;
   justify-content: center;
 }
@@ -50,7 +50,7 @@ He's asked you to provide a fix before the review later today.
 CSS:
 
 ```css
-.someClass {
+.nav-item {
   display: flex;
   align-items: center;
 }
@@ -62,7 +62,15 @@ Tailwind:
 <div class="flex align-items"></div>
 ```
 
-### X & Y Axis
+## Horizontal + Vertical Centering
+
+**Scenario:** Arjuna, one of the key stakeholders, has asked that the footer text be centered.
+
+Being proactive the dev that you are, you reach out to ask it he's asking for horizontal or vertical centering.
+
+He says, "Both."
+
+**Task:** Center footer text horizontally and vertically in the footer
 
 CSS:
 
@@ -79,3 +87,8 @@ Tailwind:
 ```html
 <div class="flex items-center justify-center"></div>
 ```
+
+<iframe
+  style={{ width: '100%', height: '500px' }}
+  src="https://stackblitz.com/edit/web-platform-vdumqb?embed=1&file=flex-center.css&initialpath=flex-center.html"
+></iframe>
