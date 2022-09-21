@@ -1,0 +1,87 @@
+---
+title: Advanced Selectors
+author: Lee Cooper
+---
+
+# Mastering CSS Selectors
+
+:::info
+Throwing concepts in here, will add a Stackblitz _Dojo_ later for
+folks to practice this stuff
+:::
+
+Direct children only
+
+```
+div > span {
+background-color: red;
+}
+```
+
+Sibling selector, selects all p siblings after div in the document order - but not p siblings before the div
+
+This is because CSS reads your file from top to bottom
+
+```
+div ~ p {
+  background-color: blue;
+}
+```
+
+/_ only select first sibling after div element that is a p, for each div element _/
+
+```
+div + p {
+  background-color: pink;
+}
+```
+
+Select each element that does not have the class of .green.
+
+These can be chained together.
+
+```
+p:not(.green) {
+  background-color: yellow;
+}
+```
+
+Attribute selector
+
+```
+input[type='text'] {
+  background-color: purple;
+}
+```
+
+Any element that has a type attribute
+
+```
+input[type] {
+  margin: 30px;
+}
+```
+
+match by data attribute and value
+
+- "\*" means match any part of the value
+- ^ means match if it starts with the value
+- $ means match if it ends with the value
+
+```
+input[data-margin*='sd'] {
+  margin: 30px;
+}
+
+input[data-margin^='sd'] {
+  margin: 30px;
+}
+
+input[data-margin$='df'] {
+  margin: 30px;
+}
+```
+
+:::tip
+Example of how to create a tip (thanks Jeff!)
+:::
