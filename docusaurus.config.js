@@ -7,7 +7,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Hypertheory Labs",
-  tagline: "Training and Resources for Software Developers",
+  tagline: "Training and Resources for Software Application Developers",
   url: "https://hypertheory-labs.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -41,8 +41,7 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            "https://github.com/hypertheory-labs/hypertheory-labs",
+          editUrl: "https://github.com/hypertheory-labs/hypertheory-labs",
         },
         blog: {
           showReadingTime: true,
@@ -170,7 +169,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ['docker', 'csharp']
+        additionalLanguages: ["docker", "csharp"],
       },
     }),
 };
