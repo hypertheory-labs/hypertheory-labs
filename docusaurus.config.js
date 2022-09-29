@@ -1,5 +1,6 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
+require("dotenv").config();
 
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
@@ -81,6 +82,29 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      algolia: {
+        // The application ID provided by Algolia
+        appId: process.env.ALGOLIA_APP_ID,
+
+        // Public API key: it is safe to commit it
+        apiKey: process.env.ALGOLIA_API_KEY,
+
+        indexName: "hypertheory-labs",
+
+        // Optional: see doc section below
+        contextualSearch: true,
+
+        // Optional: Specify domains where the navigation should occur through window.location instead on history.push. Useful when our Algolia config crawls multiple documentation sites and we want to navigate with window.location.href to them.
+        externalUrlRegex: "external\\.com|domain\\.com",
+
+        // Optional: Algolia search parameters
+        searchParameters: {},
+
+        // Optional: path for search page that enabled by default (`false` to disable it)
+        searchPagePath: "search",
+
+        //... other Algolia params
+      },
       navbar: {
         title: "Hypertheory Labs",
         logo: {
