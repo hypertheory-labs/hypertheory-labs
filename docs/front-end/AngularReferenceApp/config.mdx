@@ -1,0 +1,144 @@
+---
+title: Configuration
+author: Jeff Gonzalez
+description: Configuration
+sidebar_position: 100
+keywords:
+  - angular
+  - reference
+  - nx
+  - github
+---
+
+import AuthorBlurb from "@site/src/components/AuthorBlurb";
+
+<AuthorBlurb
+  github="jeffrygonzalez"
+  fullName="Jeff Gonzalez"
+  description="Configuration"
+  created="10/13/2022"
+/>
+
+## ESLint
+
+The only eslint rule right now added on top of the stuff NX gives you by default is `eqeqeq`.
+
+:::note There is an issue to add the NGRX ESLint rules
+https://github.com/hypertheory-reference/angular/issues/24
+:::
+
+```json title="~/.eslintrc.json"
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nrwl/nx"],
+  "overrides": [W
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        // highlight-next-line
+        "eqeqeq": "warn",
+        "@nrwl/nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "extends": ["plugin:@nrwl/nx/typescript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nrwl/nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
+      "env": {
+        "jest": true
+      },
+      "rules": {}
+    }
+  ]
+}
+```
+
+## Prettier
+
+The configuration for Prettier looks like this:
+
+```json title="~/prettier.rc"
+{
+  "plugins": ["./node_modules/prettier-plugin-multiline-arrays"],
+  "singleQuote": true,
+  "singleAttributePerLine": true,
+  "trailingComma": "all",
+  "arrowParens": "always"
+}
+```
+
+The `prettier-plugin-multiline-arrays` was NPM installed as a dev dependency.
+
+### `prettier-plugin-multiline-arrays`
+
+I really like this _most_ of the time. Especially for modules, etc. Each element in the array is put on its own line:
+
+```typescript title="Example"
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    // highlight-start
+    BrowserModule,
+    AppRoutingModule,
+    SharedModule,
+    AppNgrxModule,
+    // highlight-end
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+```
+
+**However** in some places, it can be annoying. For example, in destructuring an array:
+
+```typescript title="Example"
+// highlight-next-line
+// prettier-ignore
+map(([,result]) => result)
+```
+
+## `singleQuote`
+
+I've learned to live with it. It is the _Angular Way_.
+
+## `singleLinePerAttribute`
+
+Love it. In templates, it means if an element has multiple attributes, they each break on their own line.
+
+```text title="Attributes Example"
+<a
+    class="btn btn-accent"
+    [routerLink]="['..', '..', 'list']"
+  >Back to the List</a
+>
+```
+
+## `trailingCommas`
+
+I just like it. Especially with the multi-line arrays. You don't have to remember to go back up to the previous element and add a comma.
+
+## `arrowParens`
+
+Arrow functions with a single argument don't require parens. Others do. I just like to make them consistent.
