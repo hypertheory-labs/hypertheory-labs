@@ -1,0 +1,105 @@
+---
+title: The .vscode Folder
+author: Jeff Gonzalez
+description: Extensions, Settings, Snippets used in the reference app
+sidebar_position: 99
+keywords:
+  - angular
+  - reference
+  - nx
+  - github
+---
+
+import AuthorBlurb from "@site/src/components/AuthorBlurb";
+
+<AuthorBlurb
+  github="jeffrygonzalez"
+  fullName="Jeff Gonzalez"
+  description="The VSCode Folder"
+  created="10/13/2022"
+/>
+
+The [`.vscode` folder](https://github.com/hypertheory-reference/angular/tree/main/.vscode) in the root of the project presupposes you will be using Visual Studio Code for your development.
+
+This is a _special_ folder that VSCode recognizes when you open a folder.
+
+Right now we are using it for _workspace settings_, recommending _extensions_, and providing some _code snippets_ to speed development.
+
+The big challenge with this, for me, is to make the things I put in here more objective than subjective. For example, the `settings.json` file will have the settings for the workspace. This means when you have the workspace open, these settings will overwrite and take precedence over the user settings.
+
+Extensions are another matter all together, since when the user opens the repo, any extensions that are listed in the `extensions.json` file that the user doesn't currently have installed will cause Code to notify the user to install the recommended extensions. _Unfortunately_ these _don't_ go away when the user opens another project.
+
+## Extensions
+
+- **`angular.ng-template`: Angular Language Service**
+  - Used by Angular to provide support in templates, etc. Gets better all the time.
+  - If it stops working run the `Angular: Restart Angular Language Service` in Code.
+- **`nrwl.angular-console`: The NX Console**
+  - The console for NX. There will be a whole article about this.
+- **`esbenp.prettier-vscode`**: Prettier,
+- **`firsttris.vscode-jest-runner`: Jest Test Runner**
+  - Recommended by NX. Leaving it here for now, but frankly I don't use it much, except when debugging a test. Which I don't do very often. :grin:
+- **`dbaeumer.vscode-eslint`: ESlint**
+  - Another article coming on ESLint.
+- **`bradlc.vscode-tailwindcss`: Tailwind**
+  - An extension that provides code completion, etc. for Tailwind CSS classes.
+- **`rhalaly.scope-to-this`: Scope to This**
+  - A little hacky, but I like it. Especially in NX repos. I often spend _days_ in just one library. With this extension you can right-click on a folder and select "Scope to this" and it is _as if_ you only had that folder open in VSCode.
+  - The thing you have to be careful of is it is not a native feature of Code (unlike Visual Studio).
+    - It puts nonsense in your `~/.vscode/settings.json` file. That should _not_ be committed.
+    - If you get stuck, screw up, etc. you can't even _see_ the `~/.vscode/settings.json` to remove the stuff.
+    - **Use with care**
+- **`Gruntfuggly.todo-tre`: Show's a nice todo and fixme list**
+  - Another one that might not be universally useful. I leave myself `//todo` notes all over the place when working on an issue, feature, etc. I _don't like_ to check those in (if they exist off localhost, they should be issues, IMO). This lets me see them, navigate to them, etc. I do that before I do a commit, or for sure as push/PR.
+
+## Workspace Settings
+
+```json
+{
+  "files.autoSave": "onFocusChange",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.linkedEditing": true,
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  }
+}
+```
+
+A fairly minimal set.
+
+- **`files.autoSave`**
+  - I like this set to `onFocusChange` instead of a timer or delay, or manual. Since the compiler watches for changed files, this means you can switch over to another window (your `localhost:4200`, or your Cypress tests, whatever), and the changes will be applied.
+- **`editor.formatOn...`**
+  - We are using Prettier for code formatting. These seem reasonable to me.
+- **`[xxxx]:editor.defaultFormatter`**
+  - Setting Prettier to be the default formatter for our application source code.
+- **`files.associations`**
+  - Since we are using TailwindCSS, and have the Tailwind extension installed, this means that when we open a CSS file, it will assume it is Tailwind and not "raw" CSS, so things like `@apply`, etc. won't show up as errors in your CSS. This setting is in support of the extension.
+
+## Code Snippets
+
+These are code snippets for various things I end up doing **a lot**.
+
+| Name                 | Trigger                | Description                              |
+| -------------------- | ---------------------- | ---------------------------------------- |
+| NGRX Root Reducer    | `ngrx-root-reducer`    | Create the root reducer                  |
+| NGRX Entity Reducer  | `ngrx-entity-reducer`  | Create an entity reducer                 |
+| NGRX Feature Reducer | `ngrx-feature-reducer` | Create a feature reducer                 |
+| NGRX Action File     | `ngrx-action-file`     | Create a file with three `actionGroups`  |
+| NGRX Effects Class   | `ngrx-effects-class`   | Create an Effects Class                  |
+| NGRX Effect          | `ngrx-effect`          | Create an Effect (in an Effects Class)   |
+| Jasmine Describe     | `desc`                 | A test (Jasmine, Jest, Cypress) describe |
+| Jasmine It           | `it`                   | A test (Jasmine, Jest, Cypress)          |
