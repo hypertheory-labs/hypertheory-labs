@@ -1,0 +1,32 @@
+---
+title: Volta
+author: Jeff Gonzalez
+description: Using Volta to Manage Node Versions
+sidebar_position: 1
+keywords:
+  - angular
+  - reference
+  - nx
+  - github
+---
+
+import AuthorBlurb from "@site/src/components/AuthorBlurb";
+
+<AuthorBlurb
+  github="jeffrygonzalez"
+  fullName="Jeff Gonzalez"
+  description="Volta"
+  created="10/13/2022"
+/>
+
+A big challenge in working with lots of different projects is making sure your dev environment matches across your team and production.
+
+Tools like Node and NPM, Yarn, etc. are installed globally on your machine. Normally, you can only have *one* version of Node and NPM installed, and with NPM with you install global packages, only one of them can be installed at a time.
+
+I used (and fought with) tools like NVM (Node Version Manager) for quite a while until I discovered [Volta](https://volta.sh). I think I heard about it originally from a tweet from Yehuda Katz [See his experience here](https://www.linkedin.com/in/yehudakatz/). 
+
+I've had great experience with Volta on multiple platforms (various Linux, Windows, MacOS).
+
+One feature in particular that I like about it is the `pin` functionality. When you are in folder with a `package.json` file, Volta *automatically* looks for the `volta` entry in it and will switch to whatever toolchain the package requires.
+
+To create the entry in your `package.json`, use the `volta pin` command, [documented here](https://docs.volta.sh/guide/understanding#managing-your-toolchain).
