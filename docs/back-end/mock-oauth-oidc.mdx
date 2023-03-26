@@ -1,0 +1,74 @@
+---
+title: Using a Mock OIDC / Oauth2 Server for Development and Testing
+author: Jeff Gonzalez
+description: Setting up a .NET 7 API to use A Mock OIDC/OAUTH2 Server
+sidebar_position: 88
+---
+
+import AuthorBlurb from "@site/src/components/AuthorBlurb";
+
+<AuthorBlurb
+  github="jeffrygonzalez"
+  fullName="Jeff Gonzalez"
+  description="Hypertheory, Hypertheory-Labs"
+  created="3/26/2023"
+/>
+
+
+## Steps
+
+### Package
+Install the Nuget Package `Microsoft.AspNetCore.Authentication.JwtBearer`
+
+### Install Services / Middleware
+
+In `Program.cs`:
+
+```csharp
+builder.Services.AddAuthentication().AddJwtBearer(options =>  
+{  
+    options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();  
+});  
+  
+builder.Services.AddAuthorization();
+```
+
+And then:
+
+```csharp
+app.UseAuthentication();  
+app.UseAuthorization();
+```
+
+In `appsettings.development.json`, add a configuration called `Authentication`:
+
+```json
+"Authentication": {
+    "Schemes": {
+      "Bearer": {
+        "Authority": "http://localhost:8080",
+        "ValidAudiences": [
+          "default"
+        ],
+        "ValidIssuer": "http://localhost:8080"
+      }
+    }
+  }
+```
+
+To start the Mock server, using Docker:
+
+```shell
+docker run -d -p 8080:8080 ghcr.io/navikt/mock-oauth2-server
+```
+
+Or use a `docker-compose.yml`:
+
+```yml
+services:
+  mock-oidc:
+    image: ghcr.io/navikt/mock-oauth2-server:0.5.6
+    ports:
+      - 8080:8080
+```
+

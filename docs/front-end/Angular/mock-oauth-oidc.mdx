@@ -1,0 +1,69 @@
+---
+title: Using a Mock OIDC / Oauth2 Server for Development and Testing
+author: Jeff Gonzalez
+description: Setting up an Angular App to use A Mock OIDC/OAUTH2 Server
+sidebar_position: 88
+---
+
+import AuthorBlurb from "@site/src/components/AuthorBlurb";
+
+<AuthorBlurb
+  github="jeffrygonzalez"
+  fullName="Jeff Gonzalez"
+  description="Hypertheory, Hypertheory-Labs"
+  created="3/26/2023"
+/>
+
+
+## Steps
+### Package
+Use the schematic:
+
+```shell
+ng add angular-auth-oidc-client
+```
+
+### Set Up The `app-auth.module.ts`:
+
+```ts
+import { NgModule } from '@angular/core';
+import { AuthModule } from 'angular-auth-oidc-client';
+
+@NgModule({
+  imports: [
+    AuthModule.forRoot({
+      config: {
+        authority: 'http://localhost:8080',
+        redirectUrl: window.location.origin,
+        postLogoutRedirectUri: window.location.origin,
+        clientId: 'default',
+        scope: 'openid profile offline_access', // 'openid profile offline_access ' + your scopes
+        responseType: 'code',
+        silentRenew: true,
+        useRefreshToken: true,
+        secureRoutes: ['http://localhost:1337/'],
+        renewTimeBeforeTokenExpiresInSeconds: 30,
+      },
+    }),
+  ],
+  exports: [AuthModule],
+})
+export class AuthConfigModule {}
+```
+
+### Start the Mock Server:
+
+
+```shell
+docker run -d -p 8080:8080 ghcr.io/navikt/mock-oauth2-server
+```
+
+Or use a `docker-compose.yml`:
+
+```yml
+services:
+  mock-oidc:
+    image: ghcr.io/navikt/mock-oauth2-server:0.5.6
+    ports:
+      - 8080:8080
+```

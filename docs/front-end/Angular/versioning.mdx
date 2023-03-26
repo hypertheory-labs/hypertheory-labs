@@ -1,0 +1,55 @@
+---
+title: Versioning Angular Application Depdendencies
+author: Jeff Gonzalez
+description: Upgrading and handling version in Angular
+unlisted: true
+---
+
+import AuthorBlurb from "@site/src/components/AuthorBlurb";
+
+<AuthorBlurb
+  github="jeffrygonzalez"
+  fullName="Jeff Gonzalez"
+  description="Hypertheory, Hypertheory-Labs"
+  created="1/23/2023"
+/>
+
+# Upgrading Angular Applications and Depdendencies
+
+Managing the dependencies of *any* application is challenging. With applications that execute in a web browser, it can be almost exponentially more challenging.
+
+## Vectors of Versioning
+
+There are a few vectors of versioning that we need to consider when managing the dependencies of an Angular application. These vectors are:
+
+- Angular
+- Angular CLI
+- TypeScript
+- Third-Party Libraries
+- Node
+- NPM
+- Browser Support
+
+### Semantic Versioning
+
+Versioning software is hard. There are a lot of different ways to version software. The most common way to version software is to use [semantic versioning](https://semver.org/). Semantic versioning is sort of a gentle-persons agreement between the authors of a package and the consumers of a package. It is a way of communicating the changes that have been made to a package in a way that is easy to understand.
+
+Semantic versioning usesa three-part version identifier: `major.minor.patch`. These three parts are used to indicate the following: `major` is for incompatible API changes, `minor` is for backwards-compatible functionality, and `patch` is for backwards-compatible bug fixes.
+
+This format is designed to help you make good decisions when upgrading dependencies. On a new project, you don't really care that much. You usually just use the latest version of everything. But as your project grows, you will want to upgrade your dependencies. You will want to upgrade your dependencies because you want to take advantage of the latest features and bug fixes. You will also want to upgrade your dependencies because you want to avoid security vulnerabilities.
+
+The gist of the idea is, when upgrading, that if there is a newer *patch* version of a dependency, it contains bug fixes, so not only is it safe to update, but it is also a good idea. 
+
+If there is a new *minor* version of a dependency, and you are already on the immediately preceeding *patch* version, then the new *minor* version is backwards compatible, so it is safe to update, and you should look at the release notes for the package because their are some new goodies there.
+
+A new *major* version means that there is *at least* one breaking change from the earlier version. Maybe something was removed, renamed, a parameter as added to a method, whatever. **IF** your code depends on that specific thing (or things) that was changed, it won't work. 
+
+The conservative view of all this, at least historically, has been to always stay a version or two behind the "bleeding edge". The benefit from updating - especially just for new features - is not worth the risk of breaking something. There are a few things that make this a bad idea these days. 
+
+One is that the teams of developers that create these libraries - the vast majority of them are open source, accepting contributions from the community - don't have the resources or the motivation to continually patch older versions of libraries. So, if you are using an older version of a library, and you find a bug, you are out of luck. You have to upgrade to the latest version to get the fix. Even calling patch versions "bug" fixes is a little too narrow. While sometimes they are legitimate bug fixes - the programmer made some kind of mistake - often these patches are for security vulnerabilities, or regressions that have been introduced because of changes in browsers. What worked great in an early version of a browser might not work in a new version. The old appeal to "if it ain't broke, don't fix it" doesn't really apply anymore because we don't have a **solid ground on which our code runs**. 
+
+:::note
+In the old days, you could have a server running software written in something like Java 3 for *decades*. The old "if it ain't broke, don't fix it" applied better then. But, now, we have a browser that is constantly changing. We have a browser that is constantly changing because it is constantly being updated. We have a browser that is constantly being updated because it is constantly being attacked. We have a browser that is constantly being attacked because it is the most popular piece of software in the world. We have a browser that is the most popular piece of software in the world because it is the only way to run software in the browser. We have a browser that is the only way to run software in the browser because it is the only way to run software in the browser.
+:::
+
+With Angular, even if you are on the highest patched version of a previous major version, you are not receiving updates, bug fixes, etc. 
